@@ -2,6 +2,20 @@
 
 For a fully guided walk through of setting up and configuring this sample, see the [Continuous Integration Using Salesforce DX](https://trailhead.salesforce.com/modules/sfdx_travis_ci) Trailhead module.
 
+## Cooling Optimization MVP (UI Demo)
+
+This repo now includes a standalone MVP interface for server intelligent cooling
+optimization using a lightweight deep reinforcement learning model.
+
+To run the demo:
+
+1) Open `mvp/index.html` in a browser.
+2) Upload a CSV or JSON dataset (or paste it directly).
+3) Select air, liquid, or hybrid cooling and click **Train & Optimize**.
+
+The output shows recommended cooling commands (fan, pump, valve, and supply
+setpoint) plus the top action scores.
+
 This repository shows one way you can successfully setup Salesforce DX with Travis CI. We make a few assumptions in this README:
 
 - You know how to get your Github repository setup with Travis CI. (Here's their [Getting Started guide](https://docs.travis-ci.com/user/getting-started/).)

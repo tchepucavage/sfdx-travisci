@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Server Intelligent Cooling Optimization MVP</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1>Server Intelligent Cooling Optimization</h1>
+        <p class="subtitle">
+          Deep reinforcement learning MVP for air and liquid cooling
+        </p>
+      </header>
+
+      <div class="layout">
+        <section class="panel">
+          <h2>Dataset Input</h2>
+          <div class="field">
+            <label for="coolingMode">Cooling Mode</label>
+            <select id="coolingMode">
+              <option value="air">Air cooled</option>
+              <option value="liquid">Liquid cooled</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="datasetFile">Upload dataset (CSV or JSON)</label>
+            <input id="datasetFile" type="file" accept=".csv,.json" />
+          </div>
+
+          <div class="field">
+            <label for="datasetText">Or paste dataset</label>
+            <textarea
+              id="datasetText"
+              rows="8"
+              placeholder="Paste CSV or JSON rows with numeric columns like inletTemp, outletTemp, power, fanSpeed, pumpSpeed."
+            ></textarea>
+          </div>
+
+          <div class="row">
+            <button id="loadSample">Load sample dataset</button>
+            <button class="primary" id="runBtn">Train &amp; Optimize</button>
+          </div>
+
+          <div class="hint" id="datasetSummary">
+            Provide at least two rows of data for training.
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Training Configuration</h2>
+          <div class="field-grid">
+            <label for="episodes">Episodes</label>
+            <input id="episodes" type="number" min="1" max="50" value="5" />
+
+            <label for="learningRate">Learning rate</label>
+            <input id="learningRate" type="number" step="0.001" value="0.02" />
+
+            <label for="discount">Discount (gamma)</label>
+            <input id="discount" type="number" step="0.01" value="0.9" />
+
+            <label for="epsilon">Exploration (epsilon)</label>
+            <input id="epsilon" type="number" step="0.01" value="0.4" />
+
+            <label for="targetTemp">Target temp (C)</label>
+            <input id="targetTemp" type="number" step="0.1" value="26" />
+
+            <label for="fanMax">Max fan speed (%)</label>
+            <input id="fanMax" type="number" step="1" value="100" />
+
+            <label for="pumpMax">Max pump speed (%)</label>
+            <input id="pumpMax" type="number" step="1" value="100" />
+
+            <label for="valveMax">Max valve (%)</label>
+            <input id="valveMax" type="number" step="1" value="100" />
+
+            <label for="baseFan">Base fan speed (%)</label>
+            <input id="baseFan" type="number" step="1" value="55" />
+
+            <label for="basePump">Base pump speed (%)</label>
+            <input id="basePump" type="number" step="1" value="45" />
+
+            <label for="baseValve">Base valve (%)</label>
+            <input id="baseValve" type="number" step="1" value="40" />
+
+            <label for="stepSize">Step size (%)</label>
+            <input id="stepSize" type="number" step="1" value="5" />
+          </div>
+        </section>
+      </div>
+
+      <section class="panel output-panel">
+        <h2>Optimization Output</h2>
+        <pre id="output">Waiting for dataset...</pre>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
