@@ -1,0 +1,4 @@
+# thermal_logger.py uses only Python stdlib
+# Optional system packages for full feature set:
+#   lm-sensors   (sensors command)
+#   nvidia-utils (nvidia-smi, for NVIDIA GPUs)
