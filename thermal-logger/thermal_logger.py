@@ -23,6 +23,15 @@ def read_sysfs(path: Path) -> float | None:
         return None
 
 
+def read_sysfs_text(path: Path) -> str | None:
+    """Read text from sysfs (for type, name, label files). Returns None if missing."""
+    try:
+        raw = path.read_text().strip()
+        return raw if raw else None
+    except OSError:
+        return None
+
+
 def discover_hwmon() -> dict[str, float]:
     """Read all hwmon temp and fan inputs."""
     out = {}
@@ -31,7 +40,7 @@ def discover_hwmon() -> dict[str, float]:
         return out
 
     for dev in sorted(hwmon.iterdir()):
-        name = read_sysfs(dev / "name")
+        name = read_sysfs_text(dev / "name")
         prefix = f"hwmon_{dev.name}"
         if name:
             prefix = f"{prefix}_{re.sub(r'[^a-zA-Z0-9]', '_', name)}"
@@ -69,7 +78,7 @@ def discover_thermal_zones() -> dict[str, float]:
             continue
         val = read_sysfs(temp_path)
         if val is not None:
-            type_name = read_sysfs(type_path) or tz.name
+            type_name = read_sysfs_text(type_path) or tz.name
             col = f"thermal_{tz.name}_{re.sub(r'[^a-zA-Z0-9]', '_', type_name)}_C"
             out[col] = val / 1000  # mC -> C
 
@@ -91,7 +100,7 @@ def discover_cooling_devices() -> dict[str, float]:
             continue
         val = read_sysfs(cur_path)
         if val is not None:
-            type_name = read_sysfs(type_path) or cd.name
+            type_name = read_sysfs_text(type_path) or cd.name
             col = f"cooling_{cd.name}_{re.sub(r'[^a-zA-Z0-9]', '_', type_name)}"
             out[col] = val
             max_val = read_sysfs(max_path)
