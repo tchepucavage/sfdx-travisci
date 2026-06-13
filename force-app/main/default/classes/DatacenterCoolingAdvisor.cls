@@ -178,7 +178,7 @@ public with sharing class DatacenterCoolingAdvisor {
     private static List<ForecastPoint> buildForecast(CoolingInputs inputs, ActionScore recommended) {
         List<ForecastPoint> forecast = new List<ForecastPoint>();
         for (Integer hour = 1; hour <= 6; hour++) {
-            Decimal hourValue = hour;
+            Decimal hourValue = Decimal.valueOf(String.valueOf(hour));
             Decimal loadFactor = 1 + (hourValue * 0.015);
             if (hour == 3 || hour == 6) {
                 loadFactor += 0.025;
@@ -358,17 +358,17 @@ public with sharing class DatacenterCoolingAdvisor {
         private String coolingMode;
 
         private CoolingInputs copy() {
-            CoolingInputs clone = new CoolingInputs();
-            clone.rackLoadKw = rackLoadKw;
-            clone.supplyTempF = supplyTempF;
-            clone.returnTempF = returnTempF;
-            clone.airflowKcfm = airflowKcfm;
-            clone.humidityPct = humidityPct;
-            clone.outsideAirTempF = outsideAirTempF;
-            clone.energyPricePerKwh = energyPricePerKwh;
-            clone.maxInletTempF = maxInletTempF;
-            clone.coolingMode = coolingMode;
-            return clone;
+            CoolingInputs copied = new CoolingInputs();
+            copied.rackLoadKw = rackLoadKw;
+            copied.supplyTempF = supplyTempF;
+            copied.returnTempF = returnTempF;
+            copied.airflowKcfm = airflowKcfm;
+            copied.humidityPct = humidityPct;
+            copied.outsideAirTempF = outsideAirTempF;
+            copied.energyPricePerKwh = energyPricePerKwh;
+            copied.maxInletTempF = maxInletTempF;
+            copied.coolingMode = coolingMode;
+            return copied;
         }
     }
 }
