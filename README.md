@@ -50,6 +50,7 @@ This project also includes a simple Salesforce UI for predictive CRAC/CRAH cooli
 - `DatacenterCoolingAdvisor` scores cooling actions with a lightweight reinforcement-learning reward approximation.
 - `datacenterCoolingTool` is a Lightning Web Component operators can place on Lightning App, Home, or Record pages.
 - The tool recommends a cooling action, shows ranked alternatives, estimates power/cost/PUE, and provides a six-hour thermal risk forecast.
+- A static UI preview is available at `docs/datacenter-cooling-advisor-preview.html` for environments without a Salesforce org.
 
 The model is intentionally transparent and self-contained for demos and workflow prototyping. Validate setpoint changes against live BMS/DCIM controls before applying them in production.
 
