@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DRL Predictive Cooling Advisor Preview</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --border: #d8dde6;
+            --blue: #0176d3;
+            --blue-soft: #eef4ff;
+            --green: #2e844a;
+            --red: #ba0517;
+            --text: #181818;
+            --muted: #5c5c5c;
+            --surface: #ffffff;
+            --background: #f3f3f3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.45;
+        }
+
+        main {
+            max-width: 1180px;
+            margin: 32px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        header {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding: 18px 22px;
+        }
+
+        .icon {
+            display: grid;
+            width: 36px;
+            height: 36px;
+            place-items: center;
+            border-radius: 8px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .content {
+            padding: 22px;
+        }
+
+        .intro {
+            margin-bottom: 20px;
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .inputs {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            color: #444444;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        input,
+        select {
+            width: 100%;
+            margin-top: 6px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 10px;
+            background: #ffffff;
+            color: var(--text);
+            font: inherit;
+        }
+
+        button {
+            width: 100%;
+            height: 42px;
+            margin-top: 21px;
+            border: 0;
+            border-radius: 4px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 700;
+            cursor: default;
+        }
+
+        .summary {
+            grid-template-columns: 2fr 1fr;
+            margin-bottom: 16px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px;
+            background: #ffffff;
+        }
+
+        .panel.accent {
+            background: var(--blue-soft);
+        }
+
+        .eyebrow {
+            margin-bottom: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .recommendation {
+            color: var(--blue);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .confidence {
+            color: var(--green);
+            font-size: 34px;
+            font-weight: 700;
+        }
+
+        .metrics {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            margin: 16px 0 24px;
+        }
+
+        .metric {
+            min-height: 94px;
+        }
+
+        .metric strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 22px;
+        }
+
+        .alerts {
+            margin: 0 0 24px 18px;
+            padding: 0;
+        }
+
+        .alerts li {
+            margin-bottom: 6px;
+        }
+
+        .tables {
+            grid-template-columns: 1fr;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f7f9fb;
+            font-weight: 700;
+        }
+
+        .risk-high {
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        @media (max-width: 860px) {
+            .inputs,
+            .summary,
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="card">
+            <header>
+                <div class="icon">F</div>
+                <div>
+                    <h1>DRL Predictive Cooling Advisor</h1>
+                    <p class="eyebrow">Static preview of the Salesforce Lightning Web Component</p>
+                </div>
+            </header>
+
+            <div class="content">
+                <p class="intro">
+                    Tune CRAC/CRAH controls with a lightweight reinforcement-learning policy approximation that scores
+                    thermal risk, energy use, and control movement for the next cooling action.
+                </p>
+
+                <section class="grid inputs" aria-label="Cooling inputs">
+                    <div>
+                        <label for="load">IT load (kW)</label>
+                        <input id="load" value="480" readonly>
+                    </div>
+                    <div>
+                        <label for="supply">Supply temp (F)</label>
+                        <input id="supply" value="68" readonly>
+                    </div>
+                    <div>
+                        <label for="return">Return temp (F)</label>
+                        <input id="return" value="82" readonly>
+                    </div>
+                    <div>
+                        <label for="airflow">Airflow (kCFM)</label>
+                        <input id="airflow" value="85" readonly>
+                    </div>
+                    <div>
+                        <label for="humidity">Humidity (%)</label>
+                        <input id="humidity" value="45" readonly>
+                    </div>
+                    <div>
+                        <label for="outside">Outside air temp (F)</label>
+                        <input id="outside" value="72" readonly>
+                    </div>
+                    <div>
+                        <label for="price">Energy price ($/kWh)</label>
+                        <input id="price" value="0.12" readonly>
+                    </div>
+                    <div>
+                        <label for="limit">Max inlet temp (F)</label>
+                        <input id="limit" value="80.6" readonly>
+                    </div>
+                    <div>
+                        <label for="mode">Cooling plant</label>
+                        <select id="mode" disabled>
+                            <option selected>CRAC - compressor based</option>
+                            <option>CRAH - chilled water</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="button">Run DRL policy</button>
+                    </div>
+                </section>
+
+                <section class="grid summary" aria-label="Recommendation">
+                    <div class="panel">
+                        <p class="eyebrow">Recommended control action</p>
+                        <p class="recommendation">Raise supply setpoint</p>
+                        <p>Increase supply-air setpoint by 2 F and hold fan speed.</p>
+                        <p class="intro">
+                            DRL policy approximation selected the action with the highest reward after balancing
+                            thermal risk, predicted energy use, and control movement.
+                        </p>
+                    </div>
+                    <div class="panel accent">
+                        <p class="eyebrow">Policy confidence</p>
+                        <p class="confidence">82%</p>
+                        <p>Reward margin vs. next-best action</p>
+                    </div>
+                </section>
+
+                <section class="grid metrics" aria-label="Metrics">
+                    <div class="panel metric">
+                        <p class="eyebrow">Predicted inlet</p>
+                        <strong>78.63 F</strong>
+                    </div>
+                    <div class="panel metric">
+                        <p class="eyebrow">Headroom</p>
+                        <strong>1.97 F</strong>
+                    </div>
+                    <div class="panel metric">
+                        <p class="eyebrow">Cooling power</p>
+                        <strong>118.74 kW</strong>
+                    </div>
+                    <div class="panel metric">
+                        <p class="eyebrow">Cost / hour</p>
+                        <strong>$14.25</strong>
+                    </div>
+                    <div class="panel metric">
+                        <p class="eyebrow">Risk score</p>
+                        <strong>31.24</strong>
+                    </div>
+                </section>
+
+                <section aria-label="Operator alerts">
+                    <h2>Operator alerts</h2>
+                    <ul class="alerts">
+                        <li>Thermal headroom is under 2 F; avoid raising setpoints until load or airflow improves.</li>
+                    </ul>
+                </section>
+
+                <section class="grid tables">
+                    <div class="table-wrap">
+                        <h2>Ranked cooling actions</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Q score</th>
+                                    <th>Inlet F</th>
+                                    <th>Headroom F</th>
+                                    <th>Cooling kW</th>
+                                    <th>PUE</th>
+                                    <th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Raise supply setpoint</td>
+                                    <td>63.82</td>
+                                    <td>78.63</td>
+                                    <td>1.97</td>
+                                    <td>118.74</td>
+                                    <td>1.25</td>
+                                    <td>31.24</td>
+                                </tr>
+                                <tr>
+                                    <td>Maintain current controls</td>
+                                    <td>59.16</td>
+                                    <td>76.63</td>
+                                    <td>3.97</td>
+                                    <td>128.40</td>
+                                    <td>1.27</td>
+                                    <td>17.49</td>
+                                </tr>
+                                <tr>
+                                    <td>Use economizer assist</td>
+                                    <td>57.43</td>
+                                    <td>77.51</td>
+                                    <td>3.09</td>
+                                    <td>120.52</td>
+                                    <td>1.25</td>
+                                    <td>23.06</td>
+                                </tr>
+                                <tr>
+                                    <td>Boost airflow</td>
+                                    <td>53.98</td>
+                                    <td>75.61</td>
+                                    <td>4.99</td>
+                                    <td>156.92</td>
+                                    <td>1.33</td>
+                                    <td>10.38</td>
+                                </tr>
+                                <tr>
+                                    <td>Lower supply setpoint</td>
+                                    <td>50.17</td>
+                                    <td>74.94</td>
+                                    <td>5.66</td>
+                                    <td>142.51</td>
+                                    <td>1.30</td>
+                                    <td>6.11</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-wrap">
+                        <h2>Six-hour forecast using recommendation</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Hour</th>
+                                    <th>Load kW</th>
+                                    <th>Inlet F</th>
+                                    <th>Cooling kW</th>
+                                    <th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>+1</td>
+                                    <td>487.20</td>
+                                    <td>77.34</td>
+                                    <td>120.10</td>
+                                    <td>22.21</td>
+                                </tr>
+                                <tr>
+                                    <td>+2</td>
+                                    <td>494.40</td>
+                                    <td>78.15</td>
+                                    <td>121.51</td>
+                                    <td>27.84</td>
+                                </tr>
+                                <tr>
+                                    <td>+3</td>
+                                    <td>513.60</td>
+                                    <td>79.14</td>
+                                    <td>126.49</td>
+                                    <td>38.09</td>
+                                </tr>
+                                <tr>
+                                    <td>+4</td>
+                                    <td>508.80</td>
+                                    <td>79.59</td>
+                                    <td>125.96</td>
+                                    <td>42.11</td>
+                                </tr>
+                                <tr>
+                                    <td>+5</td>
+                                    <td>516.00</td>
+                                    <td>80.39</td>
+                                    <td>127.38</td>
+                                    <td>51.88</td>
+                                </tr>
+                                <tr>
+                                    <td>+6</td>
+                                    <td>535.20</td>
+                                    <td>81.38</td>
+                                    <td>132.37</td>
+                                    <td class="risk-high">65.74</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

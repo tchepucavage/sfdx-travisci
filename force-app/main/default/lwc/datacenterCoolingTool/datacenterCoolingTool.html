@@ -1,0 +1,267 @@
+<template>
+    <lightning-card title="DRL Predictive Cooling Advisor" icon-name="utility:temperature">
+        <div class="slds-p-around_medium">
+            <p class="slds-text-body_regular slds-m-bottom_medium">
+                Tune CRAC/CRAH controls with a lightweight reinforcement-learning policy approximation that scores
+                thermal risk, energy use, and control movement for the next cooling action.
+            </p>
+
+            <lightning-layout multiple-rows>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="rackLoadKw"
+                        label="IT load (kW)"
+                        value={form.rackLoadKw}
+                        min="50"
+                        max="2500"
+                        step="10"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="supplyTempF"
+                        label="Supply temp (F)"
+                        value={form.supplyTempF}
+                        min="55"
+                        max="82"
+                        step="0.5"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="returnTempF"
+                        label="Return temp (F)"
+                        value={form.returnTempF}
+                        min="65"
+                        max="105"
+                        step="0.5"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="airflowKcfm"
+                        label="Airflow (kCFM)"
+                        value={form.airflowKcfm}
+                        min="20"
+                        max="350"
+                        step="1"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="humidityPct"
+                        label="Humidity (%)"
+                        value={form.humidityPct}
+                        min="15"
+                        max="80"
+                        step="1"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="outsideAirTempF"
+                        label="Outside air temp (F)"
+                        value={form.outsideAirTempF}
+                        min="-20"
+                        max="120"
+                        step="1"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="energyPricePerKwh"
+                        label="Energy price ($/kWh)"
+                        value={form.energyPricePerKwh}
+                        min="0.01"
+                        max="1"
+                        step="0.01"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-input
+                        type="number"
+                        name="maxInletTempF"
+                        label="Max inlet temp (F)"
+                        value={form.maxInletTempF}
+                        min="72"
+                        max="90"
+                        step="0.5"
+                        onchange={handleInputChange}
+                    ></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small">
+                    <lightning-combobox
+                        name="coolingMode"
+                        label="Cooling plant"
+                        value={form.coolingMode}
+                        options={modeOptions}
+                        onchange={handleInputChange}
+                    ></lightning-combobox>
+                </lightning-layout-item>
+                <lightning-layout-item size="12" medium-device-size="3" padding="around-small" class="run-button">
+                    <lightning-button
+                        variant="brand"
+                        label="Run DRL policy"
+                        onclick={runPolicy}
+                        disabled={isLoading}
+                    ></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+
+            <template if:true={isLoading}>
+                <div class="slds-m-top_medium">
+                    <lightning-spinner alternative-text="Evaluating cooling policy" size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:true={errorMessage}>
+                <div class="slds-notify slds-notify_alert slds-alert_error slds-m-top_medium" role="alert">
+                    <span class="slds-assistive-text">Error</span>
+                    <h2>{errorMessage}</h2>
+                </div>
+            </template>
+
+            <template if:true={hasResult}>
+                <section class="recommendation slds-m-top_large">
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                            <div class="summary-card">
+                                <p class="slds-text-title_caps">Recommended control action</p>
+                                <h2 class="slds-text-heading_medium">{result.recommendedAction}</h2>
+                                <p class="slds-m-top_x-small">{result.controlInstruction}</p>
+                                <p class="slds-text-color_weak slds-m-top_small">{result.policySummary}</p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                            <div class="summary-card confidence-card">
+                                <p class="slds-text-title_caps">Policy confidence</p>
+                                <p class="metric">{result.confidence}%</p>
+                                <p class="slds-text-color_weak">Reward margin vs. next-best action</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="metrics slds-m-top_medium">
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                            <div class="metric-card">
+                                <span>Predicted inlet</span>
+                                <strong>{result.predictedInletTempF} F</strong>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                            <div class="metric-card">
+                                <span>Headroom</span>
+                                <strong>{result.thermalHeadroomF} F</strong>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                            <div class="metric-card">
+                                <span>Cooling power</span>
+                                <strong>{result.coolingPowerKw} kW</strong>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                            <div class="metric-card">
+                                <span>Cost / hour</span>
+                                <strong>
+                                    <lightning-formatted-number
+                                        value={result.costPerHour}
+                                        format-style="currency"
+                                        currency-code="USD"
+                                    ></lightning-formatted-number>
+                                </strong>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                            <div class="metric-card">
+                                <span>Risk score</span>
+                                <strong>{result.riskScore}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="slds-m-top_large">
+                    <h3 class="slds-text-heading_small slds-m-bottom_small">Operator alerts</h3>
+                    <ul class="slds-list_dotted">
+                        <template for:each={alertItems} for:item="alert">
+                            <li key={alert.id}>{alert.message}</li>
+                        </template>
+                    </ul>
+                </section>
+
+                <section class="slds-m-top_large table-container">
+                    <h3 class="slds-text-heading_small slds-m-bottom_small">Ranked cooling actions</h3>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col">Action</th>
+                                <th scope="col">Q score</th>
+                                <th scope="col">Inlet F</th>
+                                <th scope="col">Headroom F</th>
+                                <th scope="col">Cooling kW</th>
+                                <th scope="col">PUE</th>
+                                <th scope="col">Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={result.actionScores} for:item="action">
+                                <tr key={action.name}>
+                                    <th scope="row">{action.name}</th>
+                                    <td>{action.qValue}</td>
+                                    <td>{action.predictedInletTempF}</td>
+                                    <td>{action.thermalHeadroomF}</td>
+                                    <td>{action.coolingPowerKw}</td>
+                                    <td>{action.pue}</td>
+                                    <td>{action.riskScore}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="slds-m-top_large table-container">
+                    <h3 class="slds-text-heading_small slds-m-bottom_small">Six-hour forecast using recommendation</h3>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col">Hour</th>
+                                <th scope="col">Load kW</th>
+                                <th scope="col">Inlet F</th>
+                                <th scope="col">Cooling kW</th>
+                                <th scope="col">Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={result.forecast} for:item="point">
+                                <tr key={point.hour}>
+                                    <th scope="row">+{point.hour}</th>
+                                    <td>{point.loadKw}</td>
+                                    <td>{point.inletTempF}</td>
+                                    <td>{point.coolingPowerKw}</td>
+                                    <td>{point.riskScore}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </section>
+            </template>
+        </div>
+    </lightning-card>
+</template>

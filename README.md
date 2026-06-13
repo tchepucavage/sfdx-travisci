@@ -43,6 +43,17 @@ And you should be ready to go! Now when you commit and push a change, your chang
 
 Enjoy!
 
+## DRL Predictive Cooling Advisor
+
+This project also includes a simple Salesforce UI for predictive CRAC/CRAH cooling decisions in a datacenter:
+
+- `DatacenterCoolingAdvisor` scores cooling actions with a lightweight reinforcement-learning reward approximation.
+- `datacenterCoolingTool` is a Lightning Web Component operators can place on Lightning App, Home, or Record pages.
+- The tool recommends a cooling action, shows ranked alternatives, estimates power/cost/PUE, and provides a six-hour thermal risk forecast.
+- A static UI preview is available at `docs/datacenter-cooling-advisor-preview.html` for environments without a Salesforce org.
+
+The model is intentionally transparent and self-contained for demos and workflow prototyping. Validate setpoint changes against live BMS/DCIM controls before applying them in production.
+
 ## Contributing to the Repository ###
 
 If you find any issues or opportunities for improving this repository, fix them!  Feel free to contribute to this project by [forking](http://help.github.com/fork-a-repo/) this repository and make changes to the content.  Once you've made your changes, share them back with the community by sending a pull request. Please see [How to send pull requests](http://help.github.com/send-pull-requests/) for more information about contributing to Github projects.
